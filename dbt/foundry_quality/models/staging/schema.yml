@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_casting_metadata
+    columns:
+      - name: filename
+        tests:
+          - not_null
+      - name: label
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['defective', 'ok']
+      - name: split
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['train', 'test']
+
+  - name: stg_secom
+    columns:
+      - name: label
+        tests:
+          - not_null
+
+  - name: stg_ai4i
+    columns:
+      - name: udi
+        tests:
+          - not_null
+          - unique
+      - name: machine_failure
+        tests:
+          - not_null
+          

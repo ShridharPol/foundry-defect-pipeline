@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: foundry_raw
+    database: foundry-defect-pipeline-2
+    schema: foundry_raw
+    tables:
+      - name: casting_metadata
+      - name: secom_sensors
+      - name: ai4i_maintenance

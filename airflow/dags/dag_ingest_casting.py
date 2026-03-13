@@ -11,7 +11,7 @@ from airflow.operators.python import PythonOperator
 from google.cloud import storage, bigquery
 
 
-DATA_ROOT = "/opt/airflow/data/raw/casting"
+DATA_ROOT = "/opt/airflow/data/raw/casting/casting_data/casting_data"
 IMAGE_EXTENSIONS = (".jpeg", ".jpg")
 
 LABEL_MAP = {"def_front": "defective", "ok_front": "ok"}
