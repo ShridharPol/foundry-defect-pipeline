@@ -2,6 +2,7 @@
 
 > A proof-of-concept quality inspection pipeline built for iron casting manufacturer clients in the Belagavi industrial cluster — developed during my time at Hamdan InfoCom.
 
+> Note: This pipeline was originally built at Hamdan InfoCom, Belagavi. This repository is a portfolio reconstruction using public benchmark datasets as proxies for client production data (NDA).
 ---
 
 ## Business Context
