@@ -1,0 +1,15 @@
+artifact_uri: file:///E:/Hobby%20Project/foundry-defect/foundry-defect-pipeline/mlruns/827780084335915667/01dcaff7e8f14b6eb6976bf1ad78989b/artifacts
+end_time: 1773449582893
+entry_point_name: ''
+experiment_id: '827780084335915667'
+lifecycle_stage: active
+run_id: 01dcaff7e8f14b6eb6976bf1ad78989b
+run_name: xgboost_process_anomaly
+run_uuid: 01dcaff7e8f14b6eb6976bf1ad78989b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773449576461
+status: 3
+tags: []
+user_id: Shridhar

@@ -1,0 +1,15 @@
+artifact_uri: file:///E:/Hobby%20Project/foundry-defect/foundry-defect-pipeline/mlruns/827780084335915667/7b05fe0eea1a4d8dbf4d7616358d6768/artifacts
+end_time: 1773448903423
+entry_point_name: ''
+experiment_id: '827780084335915667'
+lifecycle_stage: active
+run_id: 7b05fe0eea1a4d8dbf4d7616358d6768
+run_name: mobilenetv2_casting_classifier
+run_uuid: 7b05fe0eea1a4d8dbf4d7616358d6768
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773448417113
+status: 3
+tags: []
+user_id: Shridhar
