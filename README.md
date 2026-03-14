@@ -152,6 +152,19 @@ Looker Studio dashboard (4 pages):
 
 ---
 
+## Screenshots
+
+### Confusion Matrix — MobileNetV2
+![CNN Confusion Matrix](docs/screenshots/confusion_matrix_mobilenetv2.png)
+
+### Looker Studio Dashboard
+![Model Performance](docs/screenshots/dashboard_model_performance.png)
+![Process Health](docs/screenshots/dashboard_process_health.png)
+![Shift Analysis](docs/screenshots/dashboard_shift_analysis.png)
+![Defect Trend](docs/screenshots/dashboard_defect_trend.png)
+
+---
+
 ## Tech Stack
 
 | Layer | Tools |
