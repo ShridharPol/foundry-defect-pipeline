@@ -2,7 +2,17 @@
 
 > A proof-of-concept quality inspection pipeline built for iron casting manufacturer clients in the Belagavi industrial cluster — developed during my time at Hamdan InfoCom.
 
-> Note: This pipeline was originally built at Hamdan InfoCom, Belagavi. This repository is a portfolio reconstruction using public benchmark datasets as proxies for client production data (NDA).
+> **Note:** This pipeline was originally built at Hamdan InfoCom, Belagavi. This repository is a portfolio reconstruction using public benchmark datasets as proxies for client production data (NDA).
+
+## Live Demo
+
+| | |
+|---|---|
+| 🖥️ **Demo UI** | https://foundry-defect-api-241173171739.us-central1.run.app/ui |
+| 📡 **API Docs** | https://foundry-defect-api-241173171739.us-central1.run.app/docs |
+
+Upload any casting image to the Demo UI and get a live defect prediction — no setup required.
+
 ---
 
 ## Business Context
@@ -46,6 +56,13 @@ Raw Data Sources
 └─────────────────┬───────────────────────┘
                   │
                   ▼
+┌──────────────────────────────────────────────────┐
+│  Serving Layer — FastAPI on GCP Cloud Run        │
+│  /ui  — drag-and-drop demo interface             │
+│  /predict — REST endpoint for image inference    │
+└──────────────────────────────────────────────────┘
+                  │
+                  ▼
 ┌─────────────────────────────────────────┐
 │         Looker Studio Dashboard         │
 │  Defect trend │ Shift analysis          │
@@ -53,7 +70,7 @@ Raw Data Sources
 └─────────────────────────────────────────┘
 ```
 
-**Infrastructure:** GCP (BigQuery + GCS) · Docker · Python 3.8
+**Infrastructure:** GCP (BigQuery + GCS + Cloud Run) · Docker · Python 3.8
 
 ---
 
@@ -125,12 +142,9 @@ Three scheduled DAGs with data quality checks (null rates, row counts, label dis
 
 Both experiments tracked in MLflow under the `foundry_defect_detection` experiment.
 
-### Phase 5 — Dashboard & Documentation
-Looker Studio dashboard (4 pages):
-- **Defect Trend** — daily defect rate with 7-day rolling average
-- **Shift Analysis** — defect rate by shift
-- **Process Health** — failure count and rate by machine type (L/M/H)
-- **Model Performance** — CNN and XGBoost results summary
+### Phase 5 — Serving, Dashboard & Documentation
+- **FastAPI model server** deployed on GCP Cloud Run — `/ui` drag-and-drop demo, `/predict` REST endpoint
+- Looker Studio dashboard (4 pages): Defect Trend, Shift Analysis, Process Health, Model Performance
 
 ---
 
@@ -148,12 +162,16 @@ Looker Studio dashboard (4 pages):
 
 - PoC demonstrated **100% defect detection accuracy** on held-out foundry images vs. 80–85% human baseline
 - XGBoost process anomaly model achieved **99.9% accuracy and 99.55% AUC** with SHAP explainability — suitable for root cause analysis and maintenance scheduling
+- Model deployed as a live REST API on GCP Cloud Run — publicly accessible, scales to zero when idle
 - Pipeline architecture designed for production scalability — Airflow DAGs, dbt models, and ML scripts are modular and source-agnostic
 - Findings packaged as a feasibility report for client stakeholders to support a full deployment decision
 
 ---
 
 ## Screenshots
+
+### Demo UI — Live on Cloud Run
+![Demo UI](docs/screenshots/demo_ui.png)
 
 ### Confusion Matrix — MobileNetV2
 ![CNN Confusion Matrix](docs/screenshots/confusion_matrix_mobilenetv2.png)
@@ -176,6 +194,7 @@ Looker Studio dashboard (4 pages):
 | ML — Vision | PyTorch 2.4, torchvision, MobileNetV2 |
 | ML — Tabular | XGBoost 2.1, SHAP 0.44 |
 | Experiment Tracking | MLflow 2.17 |
+| Model Serving | FastAPI, GCP Cloud Run |
 | Dashboard | Looker Studio |
 | Infrastructure | Docker, Python 3.8, CUDA 12.1 |
 
@@ -198,7 +217,11 @@ foundry-defect-pipeline/
 ├── notebooks/
 │   └── ml/
 │       ├── train_cnn.py
-│       └── train_xgboost.py
+│       ├── train_xgboost.py
+│       └── serve/
+│           ├── main.py
+│           ├── Dockerfile
+│           └── requirements.txt
 ├── mlflow/
 │   └── models/
 │       ├── best_mobilenetv2.pth
@@ -206,6 +229,8 @@ foundry-defect-pipeline/
 │       ├── confusion_matrix_cnn.png
 │       ├── confusion_matrix_xgboost.png
 │       └── shap_summary.png
+├── docs/
+│   └── screenshots/
 ├── data/
 │   └── raw/
 ├── docker-compose.yml
