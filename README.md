@@ -10,6 +10,7 @@
 |---|---|
 | 🖥️ **Demo UI** | https://foundry-defect-api-241173171739.us-central1.run.app/ui |
 | 📡 **API Docs** | https://foundry-defect-api-241173171739.us-central1.run.app/docs |
+| 📊 **Dashboard** | https://lookerstudio.google.com/reporting/772148c6-c390-42a6-9c28-3ea3d2109d5e |
 
 Upload any casting image to the Demo UI and get a live defect prediction — no setup required.
 
@@ -78,8 +79,8 @@ Raw Data Sources
 
 | Dataset | Source | Role |
 |---|---|---|
-| Casting Product Image Data | Kaggle (ravirajsinh45) | 7,340 real grayscale images from PILOT TECHNOCAST foundry — defective vs. ok pump impellers |
-| SECOM Semiconductor Sensors | UCI ML Repository | 590 sensor signals with pass/fail labels — proxy for furnace/mold process parameters |
+| Casting Product Image Data | Kaggle (ravirajsinh45) | 7,340 real grayscale images from PILOT TECHNOCAST foundry — defective vs. ok pump impellers (~85MB in GCS) |
+| SECOM Semiconductor Sensors | UCI ML Repository | 1,567 rows · 590 sensor signals with pass/fail labels — proxy for furnace/mold process parameters |
 | AI4I 2020 Predictive Maintenance | UCI ML Repository | 10,000 factory sensor records with equipment failure labels — process anomaly detection |
 
 ---
@@ -107,7 +108,7 @@ Three scheduled DAGs with data quality checks (null rates, row counts, label dis
 
 #### CNN Defect Classifier (MobileNetV2)
 - Transfer learning on 7,340 real foundry inspection images
-- Training: 6,633 images · Validation: 715 images
+- Training: 6,633 images · Validation: 715 images (used as held-out test set)
 - Device: CUDA (RTX 4060)
 
 | Metric | Value |
@@ -116,34 +117,38 @@ Three scheduled DAGs with data quality checks (null rates, row counts, label dis
 | Precision (def_front) | 1.00 |
 | Recall (def_front) | 1.00 |
 | F1-Score | 1.00 |
+| TP / TN / FP / FN | 453 / 262 / 0 / 0 |
 
 #### Process Anomaly Detector (XGBoost + SHAP)
 - Trained on 10,000 AI4I sensor records from BigQuery
-- Features: air temperature, process temperature, rotational speed, torque, tool wear, failure type flags
+- Features: air temperature, process temperature, rotational speed, torque, tool wear
 - 80/20 train/test split, stratified
+- Failure type sub-flags excluded to prevent data leakage (see note below)
 
 | Metric | Value |
 |---|---|
-| Accuracy | **99.90%** |
-| AUC | **99.55%** |
-| Precision (failure) | 1.00 |
-| Recall (failure) | 0.97 |
+| Accuracy | **98.55%** |
+| AUC | **97.26%** |
+| Precision (failure) | 0.87 |
+| Recall (failure) | 0.68 |
+
+> **Note on leakage prevention:** Failure type flags (twf, hdf, pwf, osf, rnf) are sub-components of the target variable `machine_failure` and were deliberately excluded. Including them yielded 99.9% accuracy but constituted data leakage — the honest sensor-only result is 98.55%.
 
 **SHAP Feature Importances (top drivers of equipment failure):**
 
 | Feature | Importance |
 |---|---|
-| torque_nm | 0.561 |
-| hdf (heat dissipation failure) | 0.558 |
-| osf (overstrain failure) | 0.515 |
-| pwf (power failure) | 0.503 |
-| rotational_speed_rpm | 0.398 |
-| tool_wear_min | 0.367 |
+| torque_nm | 1.191 |
+| tool_wear_min | 1.070 |
+| rotational_speed_rpm | 0.734 |
+| air_temperature_k | 0.733 |
+| process_temperature_k | 0.335 |
 
 Both experiments tracked in MLflow under the `foundry_defect_detection` experiment.
 
 ### Phase 5 — Serving, Dashboard & Documentation
 - **FastAPI model server** deployed on GCP Cloud Run — `/ui` drag-and-drop demo, `/predict` REST endpoint
+- Cold start latency: ~22s (Cloud Run scale from zero) · Warm inference: ~230ms
 - Looker Studio dashboard (4 pages): Defect Trend, Shift Analysis, Process Health, Model Performance
 
 ---
@@ -152,7 +157,7 @@ Both experiments tracked in MLflow under the `foundry_defect_detection` experime
 
 **Machine type L has the highest failure rate (3.92%)** compared to M (2.77%) and H (2.09%) — lower quality grade parts are disproportionately responsible for equipment failures.
 
-**Torque and heat dissipation are the dominant failure drivers** per SHAP analysis — actionable signals for preventive maintenance scheduling.
+**Torque and tool wear are the dominant failure drivers** per SHAP analysis on clean sensor-only features — actionable signals for preventive maintenance scheduling.
 
 **The CNN model exceeds the >95% accuracy target** set in the project brief, demonstrating a clear business case for automated visual inspection over the current 80–85% human baseline.
 
@@ -160,9 +165,9 @@ Both experiments tracked in MLflow under the `foundry_defect_detection` experime
 
 ## Business Impact
 
-- PoC demonstrated **100% defect detection accuracy** on held-out foundry images vs. 80–85% human baseline
-- XGBoost process anomaly model achieved **99.9% accuracy and 99.55% AUC** with SHAP explainability — suitable for root cause analysis and maintenance scheduling
-- Model deployed as a live REST API on GCP Cloud Run — publicly accessible, scales to zero when idle
+- PoC demonstrated **100% defect detection accuracy** on 715 held-out foundry images vs. 80–85% human baseline
+- XGBoost process anomaly model achieved **98.55% accuracy and 97.26% AUC** on pure sensor features with SHAP explainability — leakage-free and production-ready
+- Model deployed as a live REST API on GCP Cloud Run — publicly accessible, scales to zero when idle, ~230ms warm inference latency
 - Pipeline architecture designed for production scalability — Airflow DAGs, dbt models, and ML scripts are modular and source-agnostic
 - Findings packaged as a feasibility report for client stakeholders to support a full deployment decision
 

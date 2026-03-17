@@ -55,7 +55,7 @@ class RootResponse(BaseModel):
 def load_model():
     model = models.mobilenet_v2(weights=None)
     model.classifier[1] = nn.Linear(model.last_channel, 2)
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE, weights_only=True))
     model.eval()
     return model
 

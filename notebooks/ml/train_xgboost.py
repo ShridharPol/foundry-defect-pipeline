@@ -52,10 +52,12 @@ def load_data():
 def train():
     df = load_data()
 
+    # Note: failure type flags (twf, hdf, pwf, osf, rnf) excluded —
+    # they are sub-components of the target (machine_failure) and
+    # would constitute data leakage in a real production setting.
     feature_cols = [
         "air_temperature_k", "process_temperature_k",
         "rotational_speed_rpm", "torque_nm", "tool_wear_min",
-        "twf", "hdf", "pwf", "osf", "rnf"
     ]
     X = df[feature_cols]
     y = df["machine_failure"]
@@ -77,7 +79,7 @@ def train():
 
     mlflow.set_experiment("foundry_defect_detection")
 
-    with mlflow.start_run(run_name="xgboost_process_anomaly"):
+    with mlflow.start_run(run_name="xgboost_process_anomaly_v2_no_leakage"):
         mlflow.log_params({
             "model":            "XGBoost",
             "source_table":     TABLE,
