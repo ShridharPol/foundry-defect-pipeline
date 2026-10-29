@@ -22,11 +22,11 @@ A small metal-casting manufacturer in Belagavi relied on manual visual inspectio
 
 During my time at Hamdan InfoCom, we developed and deployed a computer vision-based inspection system to automate quality assessment. The deployment delivered measurable operational improvements:
 
-      Quality improvement: Reduced reported inspection error rates by 11 percentage points, from 13% to 2%.
+- Quality improvement: Reduced reported inspection error rates by 11 percentage points, from 13% to 2%.
 
-      Workforce optimization: Reallocated 10 of 12 inspection technicians to production while retaining 2 for final human verification.
+- Workforce optimization: Reallocated 10 of 12 inspection technicians to production while retaining 2 for final human verification.
 
-      Financial impact: Delivered approximately $8,400 in observed monthly cost savings.
+- Financial impact: Delivered approximately $8,400 in observed monthly cost savings.
 
 This repository recreates the visual defect detection workflow using public casting images and extends it with XGBoost-based equipment failure prediction, SHAP feature analysis, and a Looker Studio dashboard using independent sensor datasets.
 
