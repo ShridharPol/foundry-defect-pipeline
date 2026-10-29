@@ -1,8 +1,8 @@
 # Foundry Defect Detection & Production Quality Pipeline
 
-> A proof-of-concept quality inspection pipeline built for iron casting manufacturer clients in the Belagavi industrial cluster — developed during my time at Hamdan InfoCom.
+> An end-to-end ML quality inspection pipeline inspired by a computer vision system developed and deployed for a metal-casting manufacturer in Belagavi, India, during my time at Hamdan InfoCom.
 
-> **Note:** This pipeline was originally built at Hamdan InfoCom, Belagavi. This repository is a portfolio reconstruction using public benchmark datasets as proxies for client production data (NDA).
+> **Note:** This repository is an independent portfolio reconstruction of the original client deployment, using public benchmark datasets in place of confidential production data (NDA). It extends the original visual inspection system with sensor-based predictive maintenance, SHAP explainability, and cloud-hosted inference. All technical benchmarks reported here belong to the reconstruction, not the original deployment.
 
 ## Live Demo
 
@@ -18,9 +18,19 @@ Upload any casting image to the Demo UI and get a live defect prediction — no 
 
 ## Business Context
 
-Iron foundries in the Belagavi manufacturing cluster — clients of Hamdan InfoCom — rely heavily on manual visual inspection to identify defective castings before shipment. This process is slow, inconsistent across shifts, and typically achieves 80–85% detection accuracy. This PoC demonstrates that an automated pipeline combining image classification and process sensor anomaly detection can exceed 95% accuracy — providing a clear business case for full deployment.
+A small metal-casting manufacturer in Belagavi relied on manual visual inspections conducted by 12 technicians to identify defective machine components before shipment. Human inspection errors resulted in defective products passing quality checks, creating avoidable quality and operational costs.
 
-Public benchmark datasets are used as proxies since client production data is under NDA. The architecture is designed to be production-scalable and source-agnostic.
+During my time at Hamdan InfoCom, we developed and deployed a computer vision-based inspection system to automate quality assessment. The deployment delivered measurable operational improvements:
+
+Quality improvement: Reduced reported inspection error rates by 11 percentage points, from 13% to 2%.
+
+Workforce optimization: Reallocated 10 of 12 inspection technicians to production while retaining 2 for final human verification.
+
+Financial impact: Delivered approximately $8,400 in observed monthly cost savings.
+
+This repository recreates the visual defect detection workflow using public casting images and extends it with XGBoost-based equipment failure prediction, SHAP feature analysis, and a Looker Studio dashboard using independent sensor datasets.
+
+The objective is to demonstrate an end-to-end ML engineering workflow encompassing data ingestion, predictive modeling, explainability, cloud deployment, and production-oriented monitoring infrastructure.
 
 ---
 
