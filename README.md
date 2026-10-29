@@ -2,7 +2,7 @@
 
 > An end-to-end ML quality inspection pipeline inspired by a computer vision system developed and deployed for a metal-casting manufacturer in Belagavi, India, during my time at Hamdan InfoCom.
 
-> **Note:** This repository is an independent portfolio reconstruction of the original client deployment, using public benchmark datasets in place of confidential production data (NDA). It extends the original visual inspection system with sensor-based predictive maintenance, SHAP explainability, and cloud-hosted inference. All technical benchmarks reported here belong to the reconstruction, not the original deployment.
+> **Note:** This repository independently recreates the visual inspection workflow using public casting images and extends it with XGBoost-based equipment failure prediction, SHAP explainability, and Looker Studio dashboards built from separate public sensor datasets.
 
 ## Live Demo
 
@@ -18,19 +18,19 @@ Upload any casting image to the Demo UI and get a live defect prediction — no 
 
 ## Business Context
 
-A small metal-casting manufacturer in Belagavi relied on manual visual inspections conducted by 12 technicians to identify defective machine components before shipment. Human inspection errors resulted in defective products passing quality checks, creating avoidable quality and operational costs.
+A small metal-casting manufacturer in Belagavi relied on manual visual inspections to identify defective machine components before shipment. This labor-intensive process was susceptible to human error, allowing defective products to pass quality checks.
 
-During my time at Hamdan InfoCom, we developed and deployed a computer vision-based inspection system to automate quality assessment. The deployment delivered measurable operational improvements:
+During my time at Hamdan InfoCom, we developed and deployed a computer vision-based inspection system that delivered measurable operational improvements:
 
-- Quality improvement: Reduced reported inspection error rates by 11 percentage points, from 13% to 2%.
+- **Quality Improvement:** Reduced inspection error rates by 11 percentage points, from 13% to 2%.
+- **Workforce Optimization:** Reallocated 10 of 12 inspection technicians to production while retaining 2 for final verification.
+- **Financial Impact:** Generated approximately $8,400 in observed monthly cost savings.
 
-- Workforce optimization: Reallocated 10 of 12 inspection technicians to production while retaining 2 for final human verification.
+**Data Confidentiality:** The original client's production datasets are protected under NDA and are not included in this repository.
 
-- Financial impact: Delivered approximately $8,400 in observed monthly cost savings.
+This repository independently recreates the visual inspection workflow using public casting images and extends it with XGBoost-based equipment failure prediction, SHAP explainability, and Looker Studio dashboards using separate public sensor datasets.
 
-This repository recreates the visual defect detection workflow using public casting images and extends it with XGBoost-based equipment failure prediction, SHAP feature analysis, and a Looker Studio dashboard using independent sensor datasets.
-
-The objective is to demonstrate an end-to-end ML engineering workflow encompassing data ingestion, predictive modeling, explainability, cloud deployment, and production-oriented monitoring infrastructure.
+All model performance and inference benchmarks presented in this repository refer to the portfolio reconstruction, not the original factory deployment.
 
 ---
 
@@ -144,7 +144,7 @@ Three scheduled DAGs with data quality checks (null rates, row counts, label dis
 
 > **Note on leakage prevention:** Failure type flags (twf, hdf, pwf, osf, rnf) are sub-components of the target variable `machine_failure` and were deliberately excluded. Including them yielded 99.9% accuracy but constituted data leakage — the honest sensor-only result is 98.55%.
 
-**SHAP Feature Importances (top drivers of equipment failure):**
+**SHAP Feature Importances (Top SHAP contributors to predicted equipment failure):**
 
 | Feature | Importance |
 |---|---|
@@ -165,22 +165,41 @@ Both experiments tracked in MLflow under the `foundry_defect_detection` experime
 
 ## Key Findings
 
-**Machine type L has the highest failure rate (3.92%)** compared to M (2.77%) and H (2.09%) — lower quality grade parts are disproportionately responsible for equipment failures.
+**Visual Defect Detection**
+- MobileNetV2 achieved 100% classification accuracy on the reported 715-image held-out benchmark set (453 TP, 262 TN, 0 FP, 0 FN), demonstrating strong performance under the evaluated conditions. Generalization to new production environments requires additional validation.
 
-**Torque and tool wear are the dominant failure drivers** per SHAP analysis on clean sensor-only features — actionable signals for preventive maintenance scheduling.
+**Equipment Failure Prediction**
+- XGBoost achieved 98.55% accuracy and 97.26% ROC-AUC on the AI4I predictive maintenance dataset, with 0.68 recall for equipment failures.
+- Machine type L exhibited the highest observed failure rate (3.92%), followed by M (2.77%) and H (2.09%) in the benchmark dataset.
 
-**The CNN model exceeds the >95% accuracy target** set in the project brief, demonstrating a clear business case for automated visual inspection over the current 80–85% human baseline.
+**Explainable AI**
+- SHAP analysis identified torque, tool wear, and rotational speed among the strongest contributors to predicted equipment failures, providing interpretable signals for further investigation.
+- These associations are based on public equipment sensor data and do not establish causal relationships with casting defects at the original foundry.
+
+**Model Validation**
+- Excluded failure-type indicators derived from the target variable to prevent data leakage in the XGBoost model.
+- The results demonstrate benchmark performance; further testing with representative, independently labeled production data would be necessary to establish factory-specific reliability.
 
 ---
 
-## Business Impact
+## Portfolio Results & Potential Applications
 
-- PoC demonstrated **100% defect detection accuracy** on 715 held-out foundry images vs. 80–85% human baseline
-- XGBoost process anomaly model achieved **98.55% accuracy and 97.26% AUC** on pure sensor features with SHAP explainability — leakage-free and production-ready
-- Model deployed as a live REST API on GCP Cloud Run — publicly accessible, scales to zero when idle, ~230ms warm inference latency
-- Pipeline architecture designed for production scalability — Airflow DAGs, dbt models, and ML scripts are modular and source-agnostic
-- Findings packaged as a feasibility report for client stakeholders to support a full deployment decision
+This portfolio reconstruction demonstrates an end-to-end ML quality inspection architecture inspired by an industrial computer vision deployment.
 
+**Demonstrated Capabilities**
+- **Automated Inspection:** MobileNetV2 achieved 100% accuracy on the reported 715-image benchmark evaluation set, demonstrating the feasibility of automated visual defect classification under controlled test conditions.
+- **Predictive Maintenance:** XGBoost achieved 98.55% accuracy and 97.26% ROC-AUC using public equipment sensor records.
+- **Explainability:** SHAP analysis and Looker Studio dashboards provide insights into model predictions, equipment failure patterns, and quality-related metrics.
+- **Cloud Inference:** Deployed a FastAPI inference service on GCP Cloud Run, achieving approximately 230 ms warm inference latency, with scale-to-zero capability.
+- **Modular Architecture:** Integrated Airflow, dbt Core, BigQuery, GCS, and MLflow to demonstrate reproducible data processing, model development, and cloud deployment.
+
+**Potential Industrial Applications**
+
+The architecture could support automated visual inspections, earlier identification of equipment anomalies, reduced manual inspection workloads, and data-driven quality monitoring.
+
+Actual deployment would require factory-specific validation, integration with inspection hardware, reliability testing, and appropriate human oversight.
+
+**Scope:** The public casting images and equipment sensor datasets are independent benchmark sources. They do not represent synchronized measurements from the original manufacturing environment. The reconstruction's performance metrics should not be interpreted as operational results from the original client deployment.
 ---
 
 ## Screenshots
@@ -263,4 +282,4 @@ foundry-defect-pipeline/
 
 ---
 
-*Developed by Shridhar at Hamdan InfoCom · Belagavi, India*
+*Developed by Shridhar Sunilkumar Pol as an independent portfolio reconstruction, inspired by an industrial quality inspection system originally deployed during his tenure at Hamdan InfoCom, Belagavi, India.*
